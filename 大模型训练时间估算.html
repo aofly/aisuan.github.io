@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大模型训练时间估算</title>
+  <meta name="description" content="大模型训练时间估算工具，帮助您快速计算深度学习模型训练所需时间。支持自定义模型参数量、训练数据量、GPU数量等参数。">
+  <meta name="keywords" content="大模型,训练时间,估算工具,深度学习,GPU,模型训练">
+  <meta name="author" content="网页开发专家助手">
+  <style>
+    /* 统一字体和颜色 */
+    :root {
+      --primary-color: #007bff;
+      --error-color: #ff4d4d;
+      --background-color: #f4f4f9;
+      --text-color: #333;
+      --border-color: #ccc;
+      --container-bg: #fff;
+      --hint-color: #666;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --background-color: #1e1e1e;
+      --text-color: #f4f4f9;
+      --container-bg: #2d2d2d;
+      --border-color: #444;
+      --hint-color: #999;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    h1 {
+      color: var(--text-color);
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--container-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 25px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+      background-color: var(--container-bg);
+      color: var(--text-color);
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+    }
+
+    .input-group .hint {
+      font-size: 0.8rem;
+      color: var(--hint-color);
+      margin-top: 4px;
+    }
+
+    .input-group .unit {
+      position: absolute;
+      right: 35px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--hint-color);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      transform: scale(1.02);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(0, 123, 255, 0.1);
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .formula {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(221, 221, 221, 0.1);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--hint-color);
+      text-align: center;
+    }
+
+    .formula strong {
+      color: var(--primary-color);
+    }
+
+    .input-error {
+      border-color: var(--error-color) !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.3) !important;
+    }
+
+    .error-message {
+      display: none;
+      font-size: 0.8rem;
+      color: var(--error-color);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      input, button {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .result, .formula {
+        font-size: 1rem;
+      }
+    }
+
+    /* 暗黑模式切换按钮 */
+    .theme-switch {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--container-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .theme-switch:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-switch[data-theme="dark"] {
+      transform: rotate(180deg);
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(180deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>大模型训练时间估算</h1>
+
+    <div class="input-group">
+      <label for="modelParams">模型参数量 (P)</label>
+      <div class="input-wrapper">
+        <input type="number" id="modelParams" placeholder="例如：32" min="0">
+        <span class="unit">B</span>
+      </div>
+      <div class="hint">示例：DeepSeek R1 32B → 输入 32</div>
+    </div>
+
+    <div class="input-group">
+      <label for="trainingData">训练数据量 (T)</label>
+      <div class="input-wrapper">
+        <input type="number" id="trainingData" placeholder="例如：300" min="0">
+        <span class="unit">B</span>
+      </div>
+      <div class="hint">1B tokens ≈ 约 3-4GB 文本数据</div>
+    </div>
+
+    <div class="input-group">
+      <label for="gpuCount">GPU 数量 (N)</label>
+      <div class="input-wrapper">
+        <input type="number" id="gpuCount" placeholder="例如：8" min="0">
+        <span class="unit">个</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="gpuFlops">GPU 算力 (FLOPS)</label>
+      <div class="input-wrapper">
+        <input type="number" id="gpuFlops" placeholder="例如：312" min="0">
+        <span class="unit">TFLOPS</span>
+      </div>
+      <div class="hint">参考值：A100 FP16 ≈ 312-624, H100 ≈ 989</div>
+    </div>
+
+    <div class="input-group">
+      <label for="gpuUtilization">GPU 利用率 (U)</label>
+      <div class="input-wrapper">
+        <input type="number" id="gpuUtilization" placeholder="例如：50" min="0" max="100">
+        <span class="unit">%</span>
+      </div>
+      <div class="hint">典型范围：30% - 70%</div>
+      <div class="error-message" id="gpuUtilizationError">GPU 利用率不能超过 100%！</div>
+    </div>
+
+    <button onclick="calculateTrainingTime()">立即计算</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="formula">
+      计算公式：训练时间 (天) = <strong>6</strong> × T × P / (N × FLOPS × U × 86400)<br>
+      <small>注：<strong>6</strong> 是每 Token 的浮点运算次数的经验值。</small>
+    </div>
+  </div>
+
+  <div class="theme-switch" onclick="toggleTheme()">🌙</div>
+
+  <script>
+    function calculateTrainingTime() {
+      const P = parseFloat(document.getElementById('modelParams').value) * 1e9;
+      const T = parseFloat(document.getElementById('trainingData').value) * 1e9;
+      const N = parseFloat(document.getElementById('gpuCount').value);
+      const flops = parseFloat(document.getElementById('gpuFlops').value) * 1e12;
+      const U = parseFloat(document.getElementById('gpuUtilization').value) / 100;
+
+      const inputs = document.querySelectorAll('input');
+      let isValid = true;
+      inputs.forEach(input => {
+        if (isNaN(parseFloat(input.value)) || parseFloat(input.value) < 0 || (input.id === 'gpuUtilization' && parseFloat(input.value) > 100)) {
+          input.classList.add('input-error');
+          if (input.id === 'gpuUtilization' && parseFloat(input.value) > 100) {
+            document.getElementById('gpuUtilizationError').style.display = 'block';
+          }
+          isValid = false;
+        } else {
+          input.classList.remove('input-error');
+          document.getElementById('gpuUtilizationError').style.display = 'none';
+        }
+      });
+
+      if (!isValid) return;
+
+      const C = 6 * T * P;
+      const timeDays = C / (N * flops * U * 86400);
+
+      const result = document.getElementById('result');
+      result.innerHTML = `训练时间：${timeDays.toFixed(2)} 天`;
+      result.style.display = 'block';
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const themeSwitch = document.querySelector('.theme-switch');
+      const theme = body.getAttribute('data-theme');
+
+      if (theme === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        themeSwitch.textContent = '🌙';
+        themeSwitch.style.transform = 'rotate(0deg)';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        themeSwitch.textContent = '☀️';
+        themeSwitch.style.transform = 'rotate(180deg)';
+      }
+    }
+  </script>
+</body>
+</html>
