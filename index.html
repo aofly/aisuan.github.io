@@ -7,6 +7,11 @@
   <meta name="description" content="大模型训练时间估算工具，帮助您快速计算深度学习模型训练所需时间。支持自定义模型参数量、训练数据量、GPU数量等参数。">
   <meta name="keywords" content="大模型,训练时间,估算工具,深度学习,GPU,模型训练">
   <meta name="author" content="网页开发专家助手">
+  <meta name="theme-color" content="#4361ee">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <meta property="og:title" content="大模型训练时间估算工具">
+  <meta property="og:description" content="快速计算深度学习模型训练所需时间，支持自定义参数">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,32 +23,40 @@
       --secondary-color: #7209b7;
       --error-color: #e63946;
       --success-color: #2a9d8f;
+      --warning-color: #ff9f1c;
       --background-color: #f8f9fa;
       --text-color: #2b2d42;
-      --border-color: #dee2e6;
+      --border-color: #e9ecef;
       --container-bg: #fff;
       --hint-color: #6c757d;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      --card-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      --card-radius: 18px;
       --input-radius: 12px;
       --button-radius: 12px;
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* 进一步加快过渡速度 */
       --primary-color-rgb: 67, 97, 238;
       --secondary-color-rgb: 114, 9, 183;
+      --accent-gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      --input-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      --button-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.25);
+      --container-padding: 50px 45px; /* 进一步增加容器内边距，使页面更大气 */
+      --input-group-padding: 20px 25px 15px; /* 增加输入组内边距，使布局更宽松 */
     }
 
     [data-theme="dark"] {
-      --primary-color: #4cc9f0;
-      --primary-hover: #3db8df;
-      --secondary-color: #f72585;
+      --primary-color: #7b68ee;
+      --primary-hover: #6a5acd;
+      --secondary-color: #9370db;
       --background-color: #121212;
       --text-color: #f8f9fa;
       --container-bg: #1e1e1e;
       --border-color: #333;
       --hint-color: #adb5bd;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      --primary-color-rgb: 76, 201, 240;
-      --secondary-color-rgb: 247, 37, 133;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      --primary-color-rgb: 123, 104, 238;
+      --secondary-color-rgb: 147, 112, 219;
+      --input-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      --button-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.35);
     }
 
     body {
@@ -58,41 +71,53 @@
       align-items: center;
       min-height: 100vh;
       transition: var(--transition);
-      background-image: radial-gradient(circle at 10% 20%, rgba(var(--primary-color-rgb), 0.05) 0%, rgba(var(--secondary-color-rgb), 0.03) 90%);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(var(--primary-color-rgb), 0.05) 0%, rgba(var(--secondary-color-rgb), 0.03) 90%),
+        linear-gradient(120deg, rgba(var(--primary-color-rgb), 0.02) 0%, rgba(var(--secondary-color-rgb), 0.01) 100%);
+      background-attachment: fixed;
     }
 
     h1 {
       color: var(--text-color);
-      margin-bottom: 30px;
-      font-size: 2rem;
+      margin-bottom: 35px;
+      font-size: 2.2rem;
       text-align: center;
       font-weight: 700;
       letter-spacing: -0.5px;
       position: relative;
+      /* 使用单一颜色而不是渐变，避免顶部紫色问题 */
+      color: var(--primary-color);
+      text-shadow: 0px 2px 5px rgba(var(--primary-color-rgb), 0.15);
     }
     
     h1::after {
       content: "";
       position: absolute;
-      bottom: -10px;
+      bottom: -12px;
       left: 50%;
       transform: translateX(-50%);
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      border-radius: 2px;
+      width: 80px;
+      height: 3px;
+      /* 使用单一颜色而不是渐变 */
+      background: var(--primary-color);
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(var(--primary-color-rgb), 0.2);
     }
 
     .container {
       width: 100%;
-      max-width: 650px;
+      max-width: 800px; /* 进一步增加容器最大宽度，使页面更大气 */
       background: var(--container-bg);
       border-radius: var(--card-radius);
-      box-shadow: var(--shadow);
-      padding: 35px;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(var(--primary-color-rgb), 0.05);
+      padding: var(--container-padding); /* 使用变量控制内边距 */
       transition: var(--transition);
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      animation: fadeInUp 0.5s ease-out; /* 加快动画速度 */
+      margin: 0 auto;
     }
     
     .container::before {
@@ -101,87 +126,145 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 5px;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      height: 6px;
+      background: var(--accent-gradient);
+      box-shadow: 0 2px 10px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .input-group {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       position: relative;
       transition: var(--transition);
+      border-radius: var(--input-radius);
+      padding: var(--input-group-padding); /* 使用变量控制内边距 */
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.03), rgba(var(--secondary-color-rgb), 0.01));
+      border: 1px solid rgba(var(--primary-color-rgb), 0.08);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+    }
+    
+    .input-group.focused {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.05), rgba(var(--secondary-color-rgb), 0.03));
+      border-color: rgba(var(--primary-color-rgb), 0.15);
+      box-shadow: 0 5px 15px rgba(var(--primary-color-rgb), 0.08);
     }
 
     .input-group label {
       display: block;
-      margin-bottom: 10px;
-      font-weight: 500;
-      font-size: 1rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
       color: var(--text-color);
       transition: var(--transition);
       display: flex;
       align-items: center;
+      position: relative;
+      padding-left: 18px;
     }
     
     .input-group label::before {
       content: "";
       display: inline-block;
-      width: 6px;
-      height: 6px;
-      background-color: var(--primary-color);
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 10px;
+      box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.2);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: absolute;
+      left: 0;
+    }
+    
+    .input-group.focused label::before {
+      transform: scale(1.3);
+      box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.3);
     }
 
     .input-group input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 15px 20px; /* 增加输入框内边距 */
       border: 2px solid var(--border-color);
       border-radius: var(--input-radius);
       font-size: 1rem;
-      transition: var(--transition);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* 加快过渡速度 */
       box-sizing: border-box;
       background-color: var(--container-bg);
       color: var(--text-color);
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      font-weight: 500;
     }
 
     .input-group input:focus {
       border-color: var(--primary-color);
       outline: none;
       box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+      transform: translateY(-1px);
     }
     
     .input-group input:hover:not(:focus) {
       border-color: var(--hint-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px); /* 添加悬停效果 */
+    }
+    
+    .input-group input::placeholder {
+      color: var(--hint-color);
+      opacity: 0.7;
+      font-weight: 400;
+      transition: var(--transition);
+    }
+    
+    .input-group input:focus::placeholder {
+      opacity: 0.5;
+      transform: translateX(5px);
     }
 
     .input-group .hint {
       font-size: 0.85rem;
       color: var(--hint-color);
-      margin-top: 6px;
+      margin-top: 8px;
       transition: var(--transition);
       display: flex;
       align-items: center;
+      padding: 5px 10px;
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.04), rgba(var(--secondary-color-rgb), 0.02));
+      border-radius: 8px;
+      opacity: 0.9;
+      border-left: 2px solid rgba(var(--primary-color-rgb), 0.2);
     }
     
     .input-group .hint::before {
       content: "💡";
-      margin-right: 6px;
+      margin-right: 8px;
       font-size: 0.9rem;
     }
 
     .input-group .unit {
       position: absolute;
-      right: 16px;
+      right: 35px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--hint-color);
+      color: var(--primary-color);
       font-size: 0.9rem;
       pointer-events: none;
-      background-color: var(--container-bg);
-      padding: 0 8px;
-      border-radius: 4px;
-      font-weight: 500;
+      background-color: rgba(var(--primary-color-rgb), 0.1);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(var(--primary-color-rgb), 0.1);
+      transition: var(--transition);
     }
 
     .input-wrapper {
@@ -190,77 +273,230 @@
 
     button {
       width: 100%;
-      padding: 14px;
-      background-color: var(--primary-color);
+      padding: 16px;
+      background: var(--accent-gradient);
       color: #fff;
       border: none;
       border-radius: var(--button-radius);
-      font-size: 1.05rem;
-      font-weight: 500;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); /* 更快的过渡速度 */
       box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3);
       position: relative;
       overflow: hidden;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 10px; /* 增加与上方输入框的间距 */
     }
 
     button:hover {
-      background-color: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(var(--primary-color-rgb), 0.4);
     }
     
     button:active {
       transform: translateY(1px);
       box-shadow: 0 2px 10px rgba(var(--primary-color-rgb), 0.2);
+      transition: all 0.08s ease; /* 点击时更快的响应 */
     }
     
     button::after {
       content: "";
       position: absolute;
-      width: 100%;
+      width: 30%;
       height: 100%;
       top: 0;
-      left: -100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: 0.5s;
+      left: -30%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: 0.3s; /* 加快光效过渡 */
     }
     
     button:hover::after {
-      left: 100%;
+      left: 130%;
+    }
+    
+    button::before {
+      content: "⚡";
+      margin-right: 10px;
+      font-size: 1.2rem;
+      display: inline-block;
+      transition: transform 0.2s ease; /* 加快图标旋转 */
+    }
+    
+    button:hover::before {
+      transform: rotate(20deg);
     }
 
     .result {
-      margin-top: 25px;
-      padding: 18px;
-      background-color: rgba(var(--primary-color-rgb), 0.1);
-      border: 2px solid var(--primary-color);
+      margin-top: 30px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1), rgba(var(--secondary-color-rgb), 0.1));
       border-radius: var(--card-radius);
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--primary-color);
       display: none;
-      animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.15);
+      animation: resultAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* 加快动画速度 */
+      box-shadow: 0 8px 25px rgba(var(--primary-color-rgb), 0.15);
+      position: relative;
+      overflow: hidden;
+      transform-origin: center;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      transition: all 0.3s ease; /* 加快过渡速度 */
+    }
+    
+    @keyframes resultAppear {
+      0% { opacity: 0; transform: scale(0.98); }
+      60% { opacity: 1; transform: scale(1.005); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .result:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(var(--primary-color-rgb), 0.25);
+      border-color: rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    .result-details {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: var(--hint-color);
+      padding-top: 12px;
+      border-top: 1px dashed rgba(var(--primary-color-rgb), 0.3);
+      font-weight: 500;
+    }
+    
+    .result-details span {
+      color: var(--secondary-color);
+      font-weight: 600;
+      padding: 2px 8px;
+      background-color: rgba(var(--secondary-color-rgb), 0.1);
+      border-radius: 6px;
+      margin: 0 3px;
+    }
+    
+    .small-text {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+    
+    .result::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.1) 0%, transparent 70%);
+      opacity: 0;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { opacity: 0.5; }
+      100% { transform: scale(1.2); opacity: 0; }
+    }
+    
+    .result strong {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding: 0 5px;
+      font-size: 1.5rem;
     }
 
     .formula {
       margin-top: 25px;
-      padding: 18px;
-      background-color: rgba(var(--secondary-color-rgb), 0.05);
-      border: 1px solid var(--border-color);
+      padding: 20px 18px;
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.05), rgba(var(--secondary-color-rgb), 0.03));
       border-radius: var(--card-radius);
-      font-size: 0.95rem;
-      color: var(--hint-color);
+      font-size: 1rem;
+      color: var(--text-color);
       text-align: center;
       transition: var(--transition);
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .formula-title {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: var(--primary-color);
+      font-weight: 600;
+      padding: 3px 12px;
+      background-color: rgba(var(--primary-color-rgb), 0.08);
+      border-radius: 12px;
     }
 
     .formula strong {
       color: var(--primary-color);
       font-weight: 700;
+      padding: 0 3px;
+    }
+    
+    .formula small {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      opacity: 0.9;
+      background-color: rgba(var(--primary-color-rgb), 0.04);
+      padding: 6px 10px;
+      border-radius: 8px;
+      max-width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .formula-content {
+      font-size: 1.1rem;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgba(var(--primary-color-rgb), 0.1);
+    }
+    
+    /* 分数样式 */
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 8px;
+      vertical-align: middle;
+      background-color: rgba(var(--primary-color-rgb), 0.03);
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+    
+    .numerator {
+      border-bottom: 2px solid var(--primary-color);
+      padding: 0 8px 3px;
+      font-weight: 500;
+    }
+    
+    .fraction-line {
+      display: none;
+    }
+    
+    .denominator {
+      padding: 3px 8px 0;
+      font-weight: 500;
     }
 
     .input-error {
@@ -272,15 +508,19 @@
       display: none;
       font-size: 0.85rem;
       color: var(--error-color);
-      margin-top: 6px;
+      margin-top: 8px;
       animation: fadeIn 0.3s ease;
       display: flex;
       align-items: center;
+      background-color: rgba(230, 57, 70, 0.1);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border-left: 3px solid var(--error-color);
     }
     
     .error-message::before {
       content: "⚠️";
-      margin-right: 6px;
+      margin-right: 8px;
       font-size: 0.9rem;
     }
 
@@ -290,82 +530,213 @@
       }
       
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         margin-bottom: 25px;
       }
 
       .container {
-        padding: 25px 20px;
+        padding: 40px 35px; /* 增加内边距，保持大气感 */
         border-radius: calc(var(--card-radius) - 4px);
+        max-width: 92%;
       }
 
       .input-group {
-        margin-bottom: 20px;
+        margin-bottom: 26px; /* 增加间距 */
+        padding: 18px 20px 12px; /* 调整内边距，保持宽松感 */
       }
       
       .input-group label {
-        font-size: 0.95rem;
+        font-size: 1rem;
       }
 
-      input, button {
-        padding: 10px 14px;
-        font-size: 0.95rem;
+      input {
+        padding: 14px 18px; /* 增加输入框内边距 */
+        font-size: 1rem;
+      }
+      
+      button {
+        padding: 14px 16px;
+        font-size: 1rem;
       }
 
       .result, .formula {
-        font-size: 0.95rem;
-        padding: 15px;
-        margin-top: 20px;
+        font-size: 1rem;
+        padding: 20px; /* 增加内边距 */
+        margin-top: 25px;
+      }
+      
+      .theme-switch {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+        top: 15px;
+        right: 15px;
       }
     }
     
     @media (max-width: 480px) {
       h1 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
       }
       
       .container {
-        padding: 20px 15px;
+        padding: 30px 25px; /* 增加内边距 */
+        max-width: 95%;
+      }
+      
+      .input-group {
+        padding: 15px 16px 10px; /* 调整内边距 */
+        margin-bottom: 20px;
       }
       
       .input-group .hint,
       .error-message {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        padding: 6px 10px; /* 增加内边距 */
+      }
+      
+      .input-group input {
+        padding: 13px 16px; /* 增加输入框内边距 */
+      }
+      
+      button {
+        padding: 14px;
+        font-size: 1rem;
+      }
+      
+      .result {
+        padding: 18px 20px; /* 增加内边距 */
+      }
+      
+      .result strong {
+        font-size: 1.3rem;
+      }
+    }
+    
+    /* 添加平板适配 */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        max-width: 85%;
+        padding: 35px;
+      }
+    }
+    
+    /* 添加打印样式 */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      
+      .container {
+        box-shadow: none;
+        max-width: 100%;
+        padding: 0;
+      }
+      
+      .theme-switch {
+        display: none;
       }
     }
 
-    /* 暗黑模式切换按钮 */
+    /* 暗黑模式切换按钮 - 进一步优化版 */
     .theme-switch {
       position: fixed;
       top: 20px;
       right: 20px;
-      background-color: var(--container-bg);
-      border: 2px solid var(--border-color);
+      background: var(--container-bg);
       border-radius: 50%;
-      width: 45px;
-      height: 45px;
+      width: 50px;
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.3rem;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
+      font-size: 1.4rem;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* 稍微加快过渡 */
+      box-shadow: var(--shadow), 0 0 15px rgba(var(--primary-color-rgb), 0.2);
       z-index: 100;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 2px solid rgba(var(--primary-color-rgb), 0.1);
+      overflow: hidden;
     }
 
     .theme-switch:hover {
-      transform: scale(1.1) rotate(15deg);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-      border-color: var(--primary-color);
+      transform: scale(1.15) rotate(15deg);
+      box-shadow: 0 8px 25px rgba(var(--primary-color-rgb), 0.4);
+      border-color: rgba(var(--primary-color-rgb), 0.3);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .theme-switch[data-theme="dark"] {
       transform: rotate(180deg);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* 确保暗黑模式下也有平滑过渡 */
     }
     
     .theme-switch[data-theme="dark"]:hover {
-      transform: scale(1.1) rotate(195deg);
+      transform: scale(1.15) rotate(195deg);
+    }
+    
+    /* 保持主题切换按钮在点击时的大小，避免突然变小再变大 */
+    .theme-rotating {
+      transform: scale(1.15) !important;
+    }
+    
+    /* 优化主题切换按钮的旋转动画 - 极致流畅版 */
+    @keyframes themeRotate {
+      0% { transform: scale(1.15) rotate(0deg); }
+      50% { transform: scale(1.15) rotate(180deg); }
+      100% { transform: scale(1.15) rotate(360deg); }
+    }
+    
+    .theme-rotating {
+      animation: themeRotate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important; /* 加快旋转速度 */
+      box-shadow: 0 8px 25px rgba(var(--primary-color-rgb), 0.4) !important;
+      border-color: rgba(var(--primary-color-rgb), 0.3) !important;
+      transform: scale(1.2) !important; /* 保持放大状态，防止点击时缩小 */
+    }
+    
+    .theme-switch::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.2), rgba(var(--secondary-color-rgb), 0.2));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: -1;
+    }
+    
+    .theme-switch:hover::before {
+      opacity: 1;
+    }
+    
+    .theme-switch::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.2) 0%, transparent 70%);
+      animation: pulse-theme 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    }
+    
+    @keyframes pulse-theme {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    
+    /* 主题切换时的全局过渡效果 - 极致优化速度 */
+    body.theme-transition {
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    
+    body.theme-transition * {
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     /* 动画效果 */
@@ -398,6 +769,172 @@
     
     .shake {
       animation: shake 0.4s ease-in-out;
+    }
+    
+    /* 添加输入框聚焦动画 - 增强版 */
+    @keyframes focusIn {
+      0% { transform: scale(0.98); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); }
+      60% { transform: scale(1.02); box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15); }
+      80% { transform: scale(0.99); box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.18); }
+      100% { transform: scale(1); box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2); }
+    }
+    
+    .input-group.focused input {
+      animation: focusIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    
+    .input-group.focused .unit {
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    /* 添加输入框标签动画 */
+    .input-group.focused label {
+      color: var(--primary-color);
+      transform: translateX(3px);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* 添加按钮点击动画 - 极致优化版 */
+    @keyframes buttonClick {
+      0% { transform: scale(1); box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3); }
+    }
+    
+    /* 添加结果高亮动画 */
+    .highlight-result {
+      color: var(--primary-color);
+      text-shadow: 0 0 8px rgba(var(--primary-color-rgb), 0.4);
+      font-weight: 700;
+      animation: pulseResult 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes pulseResult {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+      40% { transform: scale(0.98); box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.2); }
+      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3); }
+    }
+    
+    .button-click {
+      animation: buttonClick 0.1s cubic-bezier(0.25, 0.1, 0.25, 1); /* 极致减少动画时间 */
+    }
+    
+    /* 添加按钮悬停时的光晕效果 */
+    button::before {
+      content: "";
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      width: 120%;
+      height: 120%;
+      border-radius: inherit;
+      background: radial-gradient(circle at center, rgba(var(--primary-color-rgb), 0.3) 0%, transparent 70%);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.5s ease;
+    }
+    
+    button:hover::before {
+      opacity: 1;
+      animation: pulseButton 2s infinite;
+    }
+    
+    @keyframes pulseButton {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+    
+    /* 添加页面元素淡入动画 - 增强版 */
+    .input-group {
+      opacity: 0;
+      animation: fadeInStagger 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transform-origin: center;
+    }
+    
+    @keyframes fadeInStagger {
+      0% { opacity: 0; transform: translateY(15px) scale(0.95); }
+      60% { opacity: 1; transform: translateY(-5px) scale(1.02); }
+      80% { transform: translateY(2px) scale(0.99); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .input-group:nth-child(2) { animation-delay: 0.12s; }
+    .input-group:nth-child(3) { animation-delay: 0.24s; }
+    .input-group:nth-child(4) { animation-delay: 0.36s; }
+    .input-group:nth-child(5) { animation-delay: 0.48s; }
+    
+    button {
+      opacity: 0;
+      animation: fadeInStagger 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s forwards;
+      transform-origin: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: 0.8s;
+    }
+    
+    button:hover::after {
+      left: 200%;
+    }
+    
+    .formula {
+      opacity: 0;
+      animation: fadeInStagger 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.85s forwards;
+      transform-origin: center;
+      position: relative;
+    }
+    
+    /* 添加微妙的背景动效 - 增强版 */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(var(--primary-color-rgb), 0.03) 0%, transparent 70%);
+      z-index: -1;
+      opacity: 0.7;
+      animation: backgroundPulse 15s ease-in-out infinite alternate;
+    }
+    
+    /* 添加多层次背景效果 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(var(--secondary-color-rgb), 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(var(--primary-color-rgb), 0.02) 0%, transparent 50%);
+      z-index: -2;
+      opacity: 0.5;
+      animation: backgroundShift 25s ease-in-out infinite alternate;
+    }
+    
+    @keyframes backgroundPulse {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 0.5; }
+    }
+    
+    @keyframes backgroundShift {
+      0% { transform: translateX(-5px) translateY(-5px); }
+      50% { transform: translateX(5px) translateY(5px); }
+      100% { transform: translateX(-5px) translateY(-5px); }
     }
   </style>
 </head>
@@ -437,7 +974,7 @@
         <input type="number" id="gpuFlops" placeholder="例如：312" min="0">
         <span class="unit">TFLOPS</span>
       </div>
-      <div class="hint">参考值：A100 FP16 ≈ 312-624, H100 ≈ 989</div>
+      <div class="hint">参考值：A100 FP16 ≈ 312, H100 ≈ 989</div>
     </div>
 
     <div class="input-group">
@@ -455,8 +992,11 @@
     <div class="result" id="result"></div>
 
     <div class="formula">
-      计算公式：训练时间 (天) = <strong>6</strong> × T × P / (N × FLOPS × U × 86400)<br>
-      <small>注：<strong>6</strong> 是每 Token 的浮点运算次数的经验值。</small>
+      <div class="formula-title">计算公式</div>
+      <div class="formula-content">
+        训练时间 (天) = <div class="fraction"><span class="numerator"><strong>6</strong> × T × P</span><span class="fraction-line"></span><span class="denominator">N × FLOPS × U × 86400</span></div>
+      </div>
+      <small>注：<strong>6</strong> 是每 Token 的浮点运算次数的经验值</small>
     </div>
   </div>
 
@@ -471,36 +1011,103 @@
         document.querySelector('.theme-switch').textContent = '☀️';
         document.querySelector('.theme-switch').setAttribute('data-theme', 'dark');
       }
+      
+      // 添加默认值
+      document.getElementById('gpuUtilization').value = '50';
+      
+      // 添加实时输入验证
+      setupInputValidation();
     });
+    
+    // 设置输入验证 - 优化为只在计算时验证
+    function setupInputValidation() {
+      const inputs = document.querySelectorAll('input');
+      
+      inputs.forEach(input => {
+        // 添加输入事件监听 - 实时清除错误状态
+        input.addEventListener('input', function() {
+          // 输入时移除错误状态
+          this.classList.remove('input-error');
+          if (this.id === 'gpuUtilization') {
+            document.getElementById('gpuUtilizationError').style.display = 'none';
+          }
+        });
+        
+        // 添加焦点效果
+        input.addEventListener('focus', function() {
+          this.parentElement.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.parentElement.classList.remove('focused');
+          // 移除失焦时的验证，只保留视觉效果
+        });
+      });
+    }
+    
+    // 验证单个输入 - 优化逻辑，只在计算时显示错误
+    function validateInput(input, showError = false) {
+      const value = parseFloat(input.value);
+      let isValid = true;
+      
+      if (input.value === '') {
+        // 空值只在点击计算按钮时显示错误
+        if (showError) {
+          isValid = false;
+        }
+      } else if (isNaN(value) || value < 0) {
+        isValid = false;
+      } else if (input.id === 'gpuUtilization' && value > 100) {
+        isValid = false;
+        if (showError) {
+          document.getElementById('gpuUtilizationError').style.display = 'block';
+        }
+      } else {
+        document.getElementById('gpuUtilizationError').style.display = 'none';
+      }
+      
+      if (!isValid && showError) {
+        input.classList.add('input-error');
+        input.classList.add('shake');
+        setTimeout(() => {
+          input.classList.remove('shake');
+        }, 500);
+      } else {
+        input.classList.remove('input-error');
+      }
+      
+      return isValid;
+    }
 
     function calculateTrainingTime() {
+      // 添加按钮点击动画 - 极致快速响应
+      const button = document.querySelector('button');
+      button.classList.add('button-click');
+      // 减少动画时间，使响应更快
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          button.classList.remove('button-click');
+        }, 100); // 极致减少动画时间
+      });
+      
+      const inputs = document.querySelectorAll('input');
+      let isValid = true;
+      
+      // 验证所有输入
+      inputs.forEach(input => {
+        if (!validateInput(input, true)) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid) return;
+      
+      // 获取输入值
       const P = parseFloat(document.getElementById('modelParams').value) * 1e9;
       const T = parseFloat(document.getElementById('trainingData').value) * 1e9;
       const N = parseFloat(document.getElementById('gpuCount').value);
       const flops = parseFloat(document.getElementById('gpuFlops').value) * 1e12;
       const U = parseFloat(document.getElementById('gpuUtilization').value) / 100;
-
-      const inputs = document.querySelectorAll('input');
-      let isValid = true;
-      inputs.forEach(input => {
-        if (isNaN(parseFloat(input.value)) || parseFloat(input.value) < 0 || (input.id === 'gpuUtilization' && parseFloat(input.value) > 100)) {
-          input.classList.add('input-error');
-          input.classList.add('shake');
-          setTimeout(() => {
-            input.classList.remove('shake');
-          }, 500);
-          
-          if (input.id === 'gpuUtilization' && parseFloat(input.value) > 100) {
-            document.getElementById('gpuUtilizationError').style.display = 'block';
-          }
-          isValid = false;
-        } else {
-          input.classList.remove('input-error');
-          document.getElementById('gpuUtilizationError').style.display = 'none';
-        }
-      });
-
-      if (!isValid) return;
 
       const C = 6 * T * P;
       const timeDays = C / (N * flops * U * 86400);
@@ -508,49 +1115,126 @@
 
       const result = document.getElementById('result');
       
-      // 格式化显示时间
+      // 格式化显示时间并添加动画效果
+      let timeDisplay = '';
       if (timeDays < 1) {
-        result.innerHTML = `预计训练时间：<strong>${timeHours.toFixed(1)}</strong> 小时`;
+        timeDisplay = `预计训练时间：<strong>${timeHours.toFixed(1)}</strong> 小时`;
       } else if (timeDays > 365) {
         const timeYears = timeDays / 365;
-        result.innerHTML = `预计训练时间：<strong>${timeYears.toFixed(1)}</strong> 年 (${timeDays.toFixed(1)} 天)`;
+        timeDisplay = `预计训练时间：<strong>${timeYears.toFixed(1)}</strong> 年 <span class="small-text">(${timeDays.toFixed(1)} 天)</span>`;
       } else {
-        result.innerHTML = `预计训练时间：<strong>${timeDays.toFixed(1)}</strong> 天`;
+        timeDisplay = `预计训练时间：<strong>${timeDays.toFixed(1)}</strong> 天`;
       }
       
-      result.style.display = 'none';
-      setTimeout(() => {
-        result.style.display = 'block';
-      }, 100);
+      // 立即设置结果内容
+      result.innerHTML = timeDisplay;
+      
+      // 立即显示结果，不使用任何延迟
+      result.style.display = 'block';
+      // 不设置初始透明度和缩放，直接显示结果
+      result.style.opacity = '1';
+      result.style.transform = 'scale(1)';
+      
+      // 立即高亮结果数字
+      const strongElement = result.querySelector('strong');
+      if (strongElement) {
+        // 添加高亮类而不是使用过渡
+        strongElement.classList.add('highlight-result');
+        setTimeout(() => {
+          strongElement.classList.remove('highlight-result');
+        }, 300); // 保持高亮时间短但可见
+      }
+      
+      // 立即滚动到结果区域
+      result.scrollIntoView({ 
+        behavior: 'auto', // 使用auto代替smooth，立即滚动
+        block: 'nearest',
+        inline: 'center'
+      });
     }
 
     function toggleTheme() {
       const body = document.body;
       const themeSwitch = document.querySelector('.theme-switch');
       const theme = body.getAttribute('data-theme');
-
-      if (theme === 'dark') {
-        body.setAttribute('data-theme', 'light');
-        themeSwitch.textContent = '🌙';
-        themeSwitch.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-      } else {
-        body.setAttribute('data-theme', 'dark');
-        themeSwitch.textContent = '☀️';
-        themeSwitch.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
+      
+      // 如果动画正在进行中，不执行任何操作
+      if (themeSwitch.classList.contains('theme-rotating')) {
+        return;
       }
-    }
-
-    // 添加输入框焦点效果
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('focus', function() {
-        this.parentElement.parentElement.classList.add('focused');
+      
+      // 添加过渡效果类
+      body.classList.add('theme-transition');
+      
+      // 设置变换原点为中心
+      themeSwitch.style.transformOrigin = 'center';
+      
+      // 立即添加旋转动画类 - 更自然的旋转效果
+      themeSwitch.classList.add('theme-rotating');
+      
+      // 立即切换主题，不使用延迟
+      if (theme === 'dark') {
+        // 从暗到亮的动画 - 立即切换
+        requestAnimationFrame(() => {
+          themeSwitch.textContent = '🌙';
+          body.setAttribute('data-theme', 'light');
+          themeSwitch.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'light');
+        });
+      } else {
+        // 从亮到暗的动画 - 立即切换
+        requestAnimationFrame(() => {
+          themeSwitch.textContent = '☀️';
+          body.setAttribute('data-theme', 'dark');
+          themeSwitch.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        });
+      }
+      
+      // 添加更自然的背景过渡效果 - 极致优化过渡速度
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.zIndex = '9999';
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.1s ease'; // 极致加快过渡速度
+      document.body.appendChild(overlay);
+      
+      // 使用requestAnimationFrame立即执行，不使用嵌套setTimeout
+      requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+              document.body.removeChild(overlay);
+            }, 100); // 极致减少延迟
+          }, 50); // 极致减少延迟
+        });
       });
       
-      input.addEventListener('blur', function() {
-        this.parentElement.parentElement.classList.remove('focused');
-      });
+      // 移除旋转动画类 - 极致减少延迟
+      setTimeout(() => {
+        themeSwitch.classList.remove('theme-rotating');
+      }, 250); // 极致缩短动画时间，使过渡更自然
+      
+      // 移除过渡效果类 - 极致减少延迟
+      setTimeout(() => {
+        body.classList.remove('theme-transition');
+      }, 150); // 极致减少延迟，使过渡更流畅
+    }
+    
+    // 添加键盘事件支持
+    document.addEventListener('keydown', function(e) {
+      // 按下回车键时计算
+      if (e.key === 'Enter') {
+        calculateTrainingTime();
+      }
     });
   </script>
 </body>
