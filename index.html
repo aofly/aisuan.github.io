@@ -7,30 +7,47 @@
   <meta name="description" content="大模型训练时间估算工具，帮助您快速计算深度学习模型训练所需时间。支持自定义模型参数量、训练数据量、GPU数量等参数。">
   <meta name="keywords" content="大模型,训练时间,估算工具,深度学习,GPU,模型训练">
   <meta name="author" content="网页开发专家助手">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* 统一字体和颜色 */
     :root {
-      --primary-color: #007bff;
-      --error-color: #ff4d4d;
-      --background-color: #f4f4f9;
-      --text-color: #333;
-      --border-color: #ccc;
+      --primary-color: #4361ee;
+      --primary-hover: #3a56d4;
+      --secondary-color: #7209b7;
+      --error-color: #e63946;
+      --success-color: #2a9d8f;
+      --background-color: #f8f9fa;
+      --text-color: #2b2d42;
+      --border-color: #dee2e6;
       --container-bg: #fff;
-      --hint-color: #666;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --hint-color: #6c757d;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-radius: 16px;
+      --input-radius: 12px;
+      --button-radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --primary-color-rgb: 67, 97, 238;
+      --secondary-color-rgb: 114, 9, 183;
     }
 
     [data-theme="dark"] {
-      --background-color: #1e1e1e;
-      --text-color: #f4f4f9;
-      --container-bg: #2d2d2d;
-      --border-color: #444;
-      --hint-color: #999;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --primary-color: #4cc9f0;
+      --primary-hover: #3db8df;
+      --secondary-color: #f72585;
+      --background-color: #121212;
+      --text-color: #f8f9fa;
+      --container-bg: #1e1e1e;
+      --border-color: #333;
+      --hint-color: #adb5bd;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --primary-color-rgb: 76, 201, 240;
+      --secondary-color-rgb: 247, 37, 133;
     }
 
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       margin: 0;
       padding: 20px;
       background-color: var(--background-color);
@@ -40,69 +57,131 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: var(--transition);
+      background-image: radial-gradient(circle at 10% 20%, rgba(var(--primary-color-rgb), 0.05) 0%, rgba(var(--secondary-color-rgb), 0.03) 90%);
     }
 
     h1 {
       color: var(--text-color);
-      margin-bottom: 20px;
-      font-size: 1.8rem;
+      margin-bottom: 30px;
+      font-size: 2rem;
       text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      position: relative;
+    }
+    
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
     }
 
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 650px;
       background: var(--container-bg);
-      border-radius: 12px;
+      border-radius: var(--card-radius);
       box-shadow: var(--shadow);
-      padding: 25px;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 35px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     }
 
     .input-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      transition: var(--transition);
     }
 
     .input-group label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
+      margin-bottom: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+    
+    .input-group label::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      margin-right: 8px;
     }
 
     .input-group input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--input-radius);
       font-size: 1rem;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: var(--transition);
       box-sizing: border-box;
       background-color: var(--container-bg);
       color: var(--text-color);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     }
 
     .input-group input:focus {
       border-color: var(--primary-color);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    .input-group input:hover:not(:focus) {
+      border-color: var(--hint-color);
     }
 
     .input-group .hint {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--hint-color);
-      margin-top: 4px;
+      margin-top: 6px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+    
+    .input-group .hint::before {
+      content: "💡";
+      margin-right: 6px;
+      font-size: 0.9rem;
     }
 
     .input-group .unit {
       position: absolute;
-      right: 35px;
+      right: 16px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--hint-color);
       font-size: 0.9rem;
       pointer-events: none;
+      background-color: var(--container-bg);
+      padding: 0 8px;
+      border-radius: 4px;
+      font-weight: 500;
     }
 
     .input-wrapper {
@@ -111,78 +190,147 @@
 
     button {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background-color: var(--primary-color);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: var(--button-radius);
+      font-size: 1.05rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.3s ease;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
     }
 
     button:hover {
-      background-color: #0056b3;
-      transform: scale(1.02);
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.4);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 10px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    button::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: -100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    button:hover::after {
+      left: 100%;
     }
 
     .result {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: rgba(0, 123, 255, 0.1);
-      border: 1px solid var(--primary-color);
-      border-radius: 8px;
+      margin-top: 25px;
+      padding: 18px;
+      background-color: rgba(var(--primary-color-rgb), 0.1);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--card-radius);
       text-align: center;
-      font-size: 1.1rem;
-      font-weight: bold;
+      font-size: 1.2rem;
+      font-weight: 700;
       color: var(--primary-color);
       display: none;
-      animation: fadeIn 0.5s ease;
+      animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.15);
     }
 
     .formula {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: rgba(221, 221, 221, 0.1);
+      margin-top: 25px;
+      padding: 18px;
+      background-color: rgba(var(--secondary-color-rgb), 0.05);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 0.9rem;
+      border-radius: var(--card-radius);
+      font-size: 0.95rem;
       color: var(--hint-color);
       text-align: center;
+      transition: var(--transition);
     }
 
     .formula strong {
       color: var(--primary-color);
+      font-weight: 700;
     }
 
     .input-error {
       border-color: var(--error-color) !important;
-      box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.3) !important;
+      box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2) !important;
     }
 
     .error-message {
       display: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--error-color);
-      margin-top: 4px;
+      margin-top: 6px;
+      animation: fadeIn 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+    
+    .error-message::before {
+      content: "⚠️";
+      margin-right: 6px;
+      font-size: 0.9rem;
     }
 
     @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+        margin-bottom: 25px;
       }
 
       .container {
-        padding: 20px;
+        padding: 25px 20px;
+        border-radius: calc(var(--card-radius) - 4px);
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+      
+      .input-group label {
+        font-size: 0.95rem;
       }
 
       input, button {
-        padding: 8px;
-        font-size: 0.9rem;
+        padding: 10px 14px;
+        font-size: 0.95rem;
       }
 
       .result, .formula {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        padding: 15px;
+        margin-top: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+      
+      .container {
+        padding: 20px 15px;
+      }
+      
+      .input-group .hint,
+      .error-message {
+        font-size: 0.8rem;
       }
     }
 
@@ -192,25 +340,32 @@
       top: 20px;
       right: 20px;
       background-color: var(--container-bg);
-      border: 1px solid var(--border-color);
+      border: 2px solid var(--border-color);
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.2rem;
-      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-size: 1.3rem;
+      transition: var(--transition);
       box-shadow: var(--shadow);
+      z-index: 100;
     }
 
     .theme-switch:hover {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary-color);
     }
 
     .theme-switch[data-theme="dark"] {
       transform: rotate(180deg);
+    }
+    
+    .theme-switch[data-theme="dark"]:hover {
+      transform: scale(1.1) rotate(195deg);
     }
 
     /* 动画效果 */
@@ -232,6 +387,17 @@
       to {
         transform: rotate(180deg);
       }
+    }
+    
+    /* 添加输入验证动画 */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .shake {
+      animation: shake 0.4s ease-in-out;
     }
   </style>
 </head>
@@ -297,6 +463,16 @@
   <div class="theme-switch" onclick="toggleTheme()">🌙</div>
 
   <script>
+    // 检查是否有保存的主题偏好
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.querySelector('.theme-switch').textContent = '☀️';
+        document.querySelector('.theme-switch').setAttribute('data-theme', 'dark');
+      }
+    });
+
     function calculateTrainingTime() {
       const P = parseFloat(document.getElementById('modelParams').value) * 1e9;
       const T = parseFloat(document.getElementById('trainingData').value) * 1e9;
@@ -309,6 +485,11 @@
       inputs.forEach(input => {
         if (isNaN(parseFloat(input.value)) || parseFloat(input.value) < 0 || (input.id === 'gpuUtilization' && parseFloat(input.value) > 100)) {
           input.classList.add('input-error');
+          input.classList.add('shake');
+          setTimeout(() => {
+            input.classList.remove('shake');
+          }, 500);
+          
           if (input.id === 'gpuUtilization' && parseFloat(input.value) > 100) {
             document.getElementById('gpuUtilizationError').style.display = 'block';
           }
@@ -323,10 +504,24 @@
 
       const C = 6 * T * P;
       const timeDays = C / (N * flops * U * 86400);
+      const timeHours = timeDays * 24;
 
       const result = document.getElementById('result');
-      result.innerHTML = `训练时间：${timeDays.toFixed(2)} 天`;
-      result.style.display = 'block';
+      
+      // 格式化显示时间
+      if (timeDays < 1) {
+        result.innerHTML = `预计训练时间：<strong>${timeHours.toFixed(1)}</strong> 小时`;
+      } else if (timeDays > 365) {
+        const timeYears = timeDays / 365;
+        result.innerHTML = `预计训练时间：<strong>${timeYears.toFixed(1)}</strong> 年 (${timeDays.toFixed(1)} 天)`;
+      } else {
+        result.innerHTML = `预计训练时间：<strong>${timeDays.toFixed(1)}</strong> 天`;
+      }
+      
+      result.style.display = 'none';
+      setTimeout(() => {
+        result.style.display = 'block';
+      }, 100);
     }
 
     function toggleTheme() {
@@ -337,13 +532,26 @@
       if (theme === 'dark') {
         body.setAttribute('data-theme', 'light');
         themeSwitch.textContent = '🌙';
-        themeSwitch.style.transform = 'rotate(0deg)';
+        themeSwitch.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
       } else {
         body.setAttribute('data-theme', 'dark');
         themeSwitch.textContent = '☀️';
-        themeSwitch.style.transform = 'rotate(180deg)';
+        themeSwitch.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
       }
     }
+
+    // 添加输入框焦点效果
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.parentElement.classList.add('focused');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.parentElement.classList.remove('focused');
+      });
+    });
   </script>
 </body>
 </html>
